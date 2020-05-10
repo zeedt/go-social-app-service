@@ -64,11 +64,31 @@ type ProfileUpdate struct {
 	Password	string	`json:"password"`
 }
 
+type Chat struct {
+	gorm.Model
+	Content	string	`gorm:"not null" json:"content"`
+	Sender	string	`gorm:"not null" json:"sender"`
+	Receiver	string	`gorm:"not null" json:"receiver"`
+}
+
 func Migrate()  {
 
-	Db.AutoMigrate(&User{},&Post{},&OauthClientDetails{},&Comment{})
+	Db.AutoMigrate(&User{},&Post{},&OauthClientDetails{},&Comment{},&Chat{})
 	Db.Model(&Post{}).AddForeignKey("userid", "users", "RESTRICT", "RESTRICT")
 	Db.Model(&Comment{}).AddForeignKey("userid", "users", "RESTRICT", "RESTRICT")
 	Db.Model(&Comment{}).AddForeignKey("postid", "posts", "RESTRICT", "RESTRICT")
 }
 
+type SocketInfo struct {
+	Username string	`json:"username"`
+	FirstName	string `json:"first_name"`
+	LastName	string `json:"last_name"`
+	Name	string	`json:"name"`
+	ID		string
+}
+
+
+type ChatMessage struct {
+	Message string `json:"message" binding:"required"`
+	To string `json:"to" binding:"required"`
+}

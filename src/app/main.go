@@ -8,6 +8,7 @@ import (
 	"go-social-app/src/app/controller"
 	"go-social-app/src/app/models"
 	_ "go-social-app/src/app/models"
+	"go-social-app/src/app/socket"
 	"net/http"
 	"time"
 )
@@ -28,12 +29,16 @@ func main() {
 	route.GET("/", func(context *gin.Context) {
 		context.String(http.StatusOK, "Yes")
 	})
+
+	socket.InitiateSocketServer()
+	route.GET("/socket.io/*any", gin.WrapH(socket.ISocketServer))
+	route.POST("/socket.io/*any", gin.WrapH(socket.ISocketServer))
+
 	securedRoute := getSecurededRoute(route)
 
 	controller.InitiateUserController(route, securedRoute)
 	controller.InitiatePostRoute(securedRoute)
-
-
+	controller.InitiateChatController(securedRoute)
 
 	route.Run(":3004")
 }
