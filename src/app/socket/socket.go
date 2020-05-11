@@ -91,11 +91,14 @@ func removeSocket(value string, array []string ) []string {
 
 func updateConnectedUsersArray(socketId string) []models.SocketInfo {
 	var newArray []models.SocketInfo
-	for index, item := range connectedUsersArray{
-		if item.ID == socketId {
-			newArray = append(newArray, connectedUsersArray[(index+1) : len(connectedUsersArray)]...)
-			return newArray
-		} else {
+	for _, item := range connectedUsersArray{
+		//if item.ID == socketId {
+		//	newArray = append(newArray, connectedUsersArray[(index+1) : len(connectedUsersArray)]...)
+		//	return newArray
+		//} else {
+		//	newArray = append(newArray, item)
+		//}
+		if item.ID != socketId {
 			newArray = append(newArray, item)
 		}
 	}

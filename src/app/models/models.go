@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
+	"sort"
 	"time"
 )
 import 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -65,10 +66,28 @@ type ProfileUpdate struct {
 }
 
 type Chat struct {
-	gorm.Model
+	sort.Interface
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
 	Content	string	`gorm:"not null" json:"content"`
 	Sender	string	`gorm:"not null" json:"sender"`
 	Receiver	string	`gorm:"not null" json:"receiver"`
+}
+
+type ChatsById []Chat
+
+func (a ChatsById) Less(i, j int) bool {
+	return a[i].ID < a[j].ID
+}
+
+func (a ChatsById) Len() int {
+	return len(a)
+}
+
+func (a ChatsById) Swap(i, j int)  {
+	a[i], a[j] = a[j], a[i]
 }
 
 func Migrate()  {
