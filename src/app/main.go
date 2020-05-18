@@ -39,6 +39,7 @@ func main() {
 	controller.InitiateUserController(route, securedRoute)
 	controller.InitiatePostRoute(securedRoute)
 	controller.InitiateChatController(securedRoute)
+	controller.InitiateCommentRoute(securedRoute)
 
 	route.Run(":3004")
 }

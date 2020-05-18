@@ -6,6 +6,7 @@ import (
 	socketio "github.com/googollee/go-socket.io"
 	"go-social-app/src/app/models"
 	"log"
+	"time"
 )
 
 var ISocketServer *socketio.Server
@@ -23,12 +24,13 @@ func InitiateSocketServer()  {
 	ISocketServer.OnConnect("/", func(s socketio.Conn) error {
 		s.SetContext("")
 		ok := ISocketServer.JoinRoom("/", "my-room", s)
-		fmt.Println("Joined ", ok)
+		fmt.Println("Joined ", ok, " socket id ", s.ID(), " at ", time.Now())
 		s.Emit("connection-received")
 		return nil
 	})
 
 	ISocketServer.OnEvent("/", "join", func(s socketio.Conn, msg models.SocketInfo) {
+		fmt.Println("Joining")
 		present := contains(socketIds, s.ID())
 		if !present {
 			connectedUsersSocketMap[s.ID()] = s
@@ -36,6 +38,7 @@ func InitiateSocketServer()  {
 			msg.ID = s.ID()
 			socketIds = append(socketIds, s.ID())
 			connectedUsersArray = append(connectedUsersArray, msg)
+			fmt.Println("Connected users number : ", len(connectedUsersArray))
 			ok := ISocketServer.BroadcastToRoom("/", "my-room","all-users", connectedUsersArray )
 			fmt.Println("Broadcasting to room ", ok)
 
@@ -50,11 +53,15 @@ func InitiateSocketServer()  {
 	})
 
 	ISocketServer.OnError("/", func(s socketio.Conn, e error) {
-		fmt.Println("meet error:", e)
+		fmt.Println("meet error: ")
+		//socketIds = removeSocket(s.ID(), socketIds)
+		//delete(connectedUsersSocketMap, s.ID())
+		//connectedUsersArray = updateConnectedUsersArray(s.ID())
 	})
 
 	ISocketServer.OnDisconnect("/", func(s socketio.Conn, reason string) {
 		// Remove this socket info from each
+		fmt.Println("Disconnected at ", time.Now())
 		socketIds = removeSocket(s.ID(), socketIds)
 		delete(connectedUsersSocketMap, s.ID())
 		connectedUsersArray = updateConnectedUsersArray(s.ID())

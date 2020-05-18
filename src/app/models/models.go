@@ -48,12 +48,15 @@ type Post struct {
 }
 
 type Comment struct {
-	gorm.Model
-	User        User `gorm:"foreignkey:Userid"`
+	ID        uint `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
+	User        User `gorm:"foreignkey:Userid" json:"user"`
 	Userid      int
 	Post	Post	`gorm:"foreignkey:Postid"`
 	Postid	int
-	Content     string `gorm:"type:TEXT;not null"`
+	Content     string `gorm:"type:TEXT;not null" json:"content"`
 }
 
 type ProfileUpdate struct {
@@ -110,4 +113,9 @@ type SocketInfo struct {
 type ChatMessage struct {
 	Message string `json:"message" binding:"required"`
 	To string `json:"to" binding:"required"`
+}
+
+type CommentModel struct {
+	Content string `json:"content"	binding:"required"`
+	PostId  int    `json:"postId"	binding:"required"`
 }

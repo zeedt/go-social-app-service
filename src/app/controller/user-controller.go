@@ -164,4 +164,14 @@ func InitiateUserController(route *gin.Engine, securedRoute *gin.RouterGroup) {
 
 	})
 
+	securedRoute.GET("/load-users", func(context *gin.Context) {
+		var users []models.User
+		username , _ := context.Get("oauth.credential")
+		models.Db.Where("username != ?", username.(string)).Find(&users)
+		context.JSON(http.StatusOK, gin.H{
+			"successful" : true,
+			"users" : users,
+		})
+	})
+
 }

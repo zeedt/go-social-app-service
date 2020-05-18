@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"mime/multipart"
+	"time"
 )
 
 func UploadFilesToS3(files []*multipart.FileHeader) ([]string, error)  {
@@ -27,7 +28,7 @@ func UploadFilesToS3(files []*multipart.FileHeader) ([]string, error)  {
 		}
 		uploadResult, err := uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String("social-app-bucket1"),
-			Key:    aws.String("social-app-images/" + file.Filename),
+			Key:    aws.String("social-app-images/" + time.Now().String() + file.Filename),
 			Body:   f,
 		})
 
